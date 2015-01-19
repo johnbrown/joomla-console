@@ -41,6 +41,12 @@ class DeployInit extends DeployAbstract
             `pom init`;
         }
 
+        //benchmark the default development environment to create future ones
+        if(!file_exists($this->target_dir . '/deploy/template.php')){
+            $output->writeln('creating template file');
+            `cp /var/www/helloworld/deploy/development.php /var/www/helloworld/deploy/template.php`;
+        }
+
         $output->writeln('pom initiated');
     }
 }
