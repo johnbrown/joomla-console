@@ -27,6 +27,7 @@ $application->add(new Joomlatools\Console\Command\ExtensionInstall());
 $application->add(new Joomlatools\Console\Command\ExtensionInstallFile());
 $application->add(new Joomlatools\Console\Command\DeployInit());
 $application->add(new Joomlatools\Console\Command\DeployEnvironment());
+$application->add(new Joomlatools\Console\Command\DeploySetup());
 
 $application->add(new Joomlatools\Console\Command\Versions());
 
