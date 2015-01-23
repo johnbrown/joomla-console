@@ -49,7 +49,7 @@ class DeployEnvironment extends DeployAbstract
 
             `cp $this->target_dir/deploy/template.php $this->target_dir/deploy/$this->environment.php`;
 
-            $output->writeln('new environment ' . $this->environment . ' created at: ');
+            $output->writeln('<info>new environment ' . $this->environment . ' created at:</info>');
             $output->writeln($this->target_dir . '/deploy/' . $this->environment . '.php');
         }
 
