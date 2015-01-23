@@ -27,9 +27,8 @@ class DeployInit extends DeployAbstract
     {
         parent::execute($input, $output);
 
-        if(!file_exists($this->target_dir . '/libraries/vendor/pomander/pomander'))
-        {
-            $output->writeln('composer install deploy dependancy');
+        //need to see if pom has been initiated
+        if(!strpos(exec('pom init'), "http://ripeworks.com/pomander")){
             `composer global require pomander/pomander:@stable`;
 
             $result = exec('composer install');
@@ -37,16 +36,14 @@ class DeployInit extends DeployAbstract
         }
 
         if(!file_exists($this->target_dir . '/deploy')){
-            $output->writeln('initiating pom');
             `pom init`;
         }
 
         //benchmark the default development environment to create future ones
         if(!file_exists($this->target_dir . '/deploy/template.php')){
-            $output->writeln('creating template file');
             `cp /var/www/helloworld/deploy/development.php /var/www/helloworld/deploy/template.php`;
         }
 
-        $output->writeln('pom initiated');
+        $output->writeln('<info>pom initiated</info>');
     }
 }
