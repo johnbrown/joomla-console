@@ -40,9 +40,12 @@ class DeploySetup extends DeployAbstract
 
         //benchmark the default development environment to create future ones
         if(!file_exists($this->target_dir . '/deploy/' . $this->environment . '.php')){
-            $output->writeln("Sorry environment file not found");
+            $output->writeln("<info>Sorry environment file not found</info>");
+            return;
         }
 
-        `pom $this->environment deploy:setup`;
+        $result = shell_exec('pom ' . $this->environment .' deploy:setup');
+        $output->writeln($result);
+
     }
 }
