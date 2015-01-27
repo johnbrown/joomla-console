@@ -26,9 +26,9 @@ class DeploySetup extends DeployAbstract
             ->setDescription('Set up deploy on your server')
             ->addArgument(
                 'environment',
-                InputArgument::REQUIRED,
+                InputArgument::OPTIONAL,
                 'Please state the deploy environment... will default to development',
-                null
+                'development'
             );
     }
 
