@@ -47,10 +47,17 @@ class DeploySSH extends DeployAbstract
         $this->user = $input->getArgument('user');
         $this->app = $input->getArgument('app');
 
-        $result = exec('cat ~/.ssh/id_rsa.pub | ssh ' . $this->user . '@' . $this->app . ' "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"');
+        //first up we need to create a rsa key in a location that can be read
+        if(!file_exists($this->target_dir . '/deploy/id_rsa')){
+            $result = shell_exec('ssh-keygen -t rsa -f '. $this->target_dir . '/deploy/id_rsa');
+        }
 
+        //next up we want to get this new public key up to the server
+        //@todo is there a way of checking whether this public key already exists on the server
+        $result = exec('cat '. $this->target_dir . '/deploy/id_rsa.pub | ssh ' . $this->user . '@' . $this->app . ' "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"');
         $output->writeln($result);
 
-        $output->writeln('<info>Vagrant ssh key successfully pushed to the server');
+        $output->writeln('<info>Be sure to add the following line to your environment file</info>');
+        $output->writeln('->key_path("' . $this->target_dir . '/deploy/id_rsa")');
     }
 }
