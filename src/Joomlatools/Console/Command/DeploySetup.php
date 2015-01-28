@@ -23,20 +23,12 @@ class DeploySetup extends DeployAbstract
 
         $this
             ->setName('deploy:setup')
-            ->setDescription('Set up deploy on your server')
-            ->addArgument(
-                'environment',
-                InputArgument::OPTIONAL,
-                'Please state the deploy environment... will default to development',
-                'development'
-            );
+            ->setDescription('Set up deploy on your server');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $this->environment = $input->getArgument('environment');
 
         $this->createPom($input, $output);
         $this->pushConfiguration($input, $output);
@@ -45,7 +37,7 @@ class DeploySetup extends DeployAbstract
 
     public function createPom(InputInterface $input, OutputInterface $output)
     {
-        if(!file_exists($this->target_dir . '/deploy/' . $this->environment . '.php')){
+        if(!file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml')){
             $output->writeln("<info>Sorry environment file not found</info>");
             return;
         }
@@ -81,8 +73,8 @@ class DeploySetup extends DeployAbstract
         };
 
         $replacements = array(
-            'user'      => $this->mysql->user,
-            'password'  => $this->mysql->password,
+            'user'      => $this->database['user'],
+            'password'  => $this->database['password'],
         );
 
         foreach($replacements as $key => $value) {
@@ -93,7 +85,7 @@ class DeploySetup extends DeployAbstract
         chmod($target, 0644);
 
         //now we need to get this up to the server
-        exec("scp " . $this->target_dir ."/configurationLIVE.php deploy@178.62.94.203:" . $this->target_dir . "/configuration.php");
+        exec("scp " . $this->target_dir ."/configurationLIVE.php " . $this->user . "@" . $this->app . ":" . $this->target_dir . "/configuration.php");
 
         unlink($target);
     }

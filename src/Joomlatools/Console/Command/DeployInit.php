@@ -23,6 +23,8 @@ class DeployInit extends DeployAbstract
             ->setDescription('Generate vendor deploy and deploy folder');
     }
 
+    //@todo we now need to store configuration details in a yml file to help cross platform workings
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);

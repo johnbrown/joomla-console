@@ -25,27 +25,12 @@ class DeploySSH extends DeployAbstract
         $this
             ->setName('deploy:ssh')
             ->setDescription('Set up deploy on your server')
-            ->addArgument(
-                'user',
-                InputArgument::REQUIRED,
-                'Please state the user you want to create ssh access for',
-                null
-            )
-            ->addArgument(
-                'app',
-                InputArgument::REQUIRED,
-                'Please ip address of the server',
-                null
-            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-
-        $this->user = $input->getArgument('user');
-        $this->app = $input->getArgument('app');
 
         //first up we need to create a rsa key in a location that can be read
         if(!file_exists($this->target_dir . '/deploy/id_rsa')){

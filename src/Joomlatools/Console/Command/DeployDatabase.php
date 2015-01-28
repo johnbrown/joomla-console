@@ -32,7 +32,7 @@ class DeployDatabase extends DeployAbstract
         parent::execute($input, $output);
 
         //first up we need to create a db export locally
-        exec("mysqldump -u root -p --password='root' --host=127.0.0.1 sites_" . $this->site . " --lock-tables=FALSE --skip-add-drop-table | sed -e 's|INSERT INTO|REPLACE INTO|' -e 's|CREATE TABLE|CREATE TABLE IF NOT EXISTS|' > /var/www/" . $this->site . "/tmpdump.sql");
+        exec("mysqldump -u root -p --password='root' --host=127.0.0.1 sites_" . $this->site . " --lock-tables=FALSE --skip-add-drop-table | sed -e 's|INSERT INTO|REPLACE INTO|' -e 's|CREATE TABLE|CREATE TABLE IF NOT EXISTS|' > " . $this->target_dir . "/tmpdump.sql");
 
         //now over to pom to push this local db up
         $result = shell_exec('pom db:merge');

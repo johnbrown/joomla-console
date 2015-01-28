@@ -12,16 +12,29 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Parser;
 
 abstract class DeployAbstract extends Command
 {
     protected $site;
-    protected $www;
 
-    protected $target_dir;
-    protected $target_db;
+    protected $user;
 
-    protected $mysql;
+    protected $repository;
+
+    protected $deploy_to;
+
+    protected $backup;
+
+    protected $branch;
+
+    protected $remote_cache;
+
+    protected $key_path;
+
+    protected $app;
+
+    protected $database;
 
     protected function configure()
     {
@@ -37,24 +50,45 @@ abstract class DeployAbstract extends Command
             '/var/www'
         )
         ->addOption(
-            'mysql',
+            'environment',
             null,
             InputOption::VALUE_REQUIRED,
-            "MySQL credentials in the form of user:password",
-            'root:root'
+            "Which deploy environment would you like to use",
+            'development'
         )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->site       = $input->getArgument('site');
-        $this->www        = $input->getOption('www');
+        $this->site         = $input->getArgument('site');
+        $this->www          = $input->getOption('www');
+        $this->environment  = $input->getOption('environment');
 
         $this->target_db  = 'sites_'.$this->site;
         $this->target_dir = $this->www.'/'.$this->site;
 
-        $credentials = explode(':', $input->getOption('mysql'), 2);
-        $this->mysql = (object) array('user' => $credentials[0], 'password' => $credentials[1]);
+        if(file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml'))
+        {
+            $yaml = new Parser;
+            $value = $yaml->parse(file_get_contents($this->target_dir . '/deploy/' . $this->environment . '.yml'));
+
+            $this->user = $value['user'];
+            $this->repository = $value['repository'];
+            $this->deploy_to = $value['deploy_to'];
+            $this->backup = $value['backup'];
+            $this->branch = $value['branch'];
+            $this->remote_cache = $value['remote_cache'];
+            $this->key_path = $value['key_path'];
+            $this->app = $value['app'];
+            $this->db = $value['db'];
+            $this->database = array(
+                'name' => $value['database']['name'],
+                'user' => $value['database']['user'],
+                'password' => $value['database']['password'],
+                'host' => $value['database']['host'],
+                'charset' => $value['database']['host']
+            );
+        }
     }
 }
