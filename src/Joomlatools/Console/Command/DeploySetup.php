@@ -30,6 +30,20 @@ class DeploySetup extends DeployAbstract
     {
         parent::execute($input, $output);
 
+        if($this->configuration['app'] == "")
+        {
+            $output->writeln('<comment>Sorry you must first provide the ip address of the sever in your config file before proceeding</comment>');
+            return;
+        }
+
+
+        if($this->configuration['repository'] == "")
+        {
+            $output->writeln("<comment>You haven't specified a repository, please edit your configuration</comment>");
+            return;
+        }
+
+        //finally just double check with the user they want to do this
         $dialog = $this->getHelper('dialog');
 
         $output->writeln('<info>You will replace the live database with a copy of your local environment.</info>');
@@ -42,20 +56,18 @@ class DeploySetup extends DeployAbstract
             return;
         }
 
-        if($this->configuration['app'] == ""){
-            $output->writeln('<comment>Sorry you must first provide the ip address of the sever in your config file before proceeding</comment>');
-        }
-
-        return;
-
         $this->createPom($input, $output);
         $this->pushConfiguration($input, $output);
-        $this->createDatabase($input, $output);
+
+        if($this->configuration['db'] != "" && $this->configuration['database']['password'] != ""){
+            $this->createDatabase($input, $output);
+        }
     }
 
     public function createPom(InputInterface $input, OutputInterface $output)
     {
-        if(!file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml')){
+        if(!file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml'))
+        {
             $output->writeln("<info>Sorry environment file not found</info>");
             return;
         }

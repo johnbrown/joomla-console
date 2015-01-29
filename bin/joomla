@@ -26,6 +26,7 @@ $application->add(new Joomlatools\Console\Command\ExtensionSymlink());
 $application->add(new Joomlatools\Console\Command\ExtensionInstall());
 $application->add(new Joomlatools\Console\Command\ExtensionInstallFile());
 $application->add(new Joomlatools\Console\Command\DeployInit());
+$application->add(new Joomlatools\Console\Command\DeployEdit());
 $application->add(new Joomlatools\Console\Command\DeploySSH());
 $application->add(new Joomlatools\Console\Command\DeployEnvironment());
 $application->add(new Joomlatools\Console\Command\DeploySetup());
