@@ -42,7 +42,9 @@ class DeploySetup extends DeployAbstract
             return;
         }
 
-        $result = shell_exec('pom ' . $this->environment .' deploy:setup');
+       exec('pom ' . $this->environment .' deploy:setup');
+
+       $output->writeln('<info>site fies have been pushed to the server</info>');
     }
 
     public function pushConfiguration(InputInterface $input, OutputInterface $output)
@@ -52,7 +54,7 @@ class DeploySetup extends DeployAbstract
             return;
         }
 
-        $result = exec('cp ' . $this->target_dir . '/configuration.php configurationLIVE.php');
+        exec('cp ' . $this->target_dir . '/configuration.php configurationLIVE.php');
 
         $source   = $this->target_dir.'/configuration.php';
         $target   = $this->target_dir.'/configurationLIVE.php';
@@ -73,8 +75,8 @@ class DeploySetup extends DeployAbstract
         };
 
         $replacements = array(
-            'user'      => $this->database['user'],
-            'password'  => $this->database['password'],
+            'user'      => $this->configuration['database']['user'],
+            'password'  => $this->configuration['database']['password'],
         );
 
         foreach($replacements as $key => $value) {
@@ -85,22 +87,23 @@ class DeploySetup extends DeployAbstract
         chmod($target, 0644);
 
         //now we need to get this up to the server
-        exec("scp " . $this->target_dir ."/configurationLIVE.php " . $this->user . "@" . $this->app . ":" . $this->target_dir . "/configuration.php");
+        exec("scp " . $this->target_dir ."/configurationLIVE.php " . $this->configuration['user'] . "@" . $this->configuration['app'] . ":" . $this->target_dir . "/configuration.php");
 
         unlink($target);
+
+        $output->writeln('<info>Your configuration has been pushed to the live site</info>');
     }
 
     public function createDatabase(InputInterface $input, OutputInterface $output)
     {
-        $result = shell_exec('pom db:create');
-
-        $output->writeln($result);
+        exec('pom db:create');
 
         //first up we need to create a db export locally
         exec("mysqldump -u root -p --password='root' --host=127.0.0.1 sites_" . $this->site . " --lock-tables=FALSE --skip-add-drop-table | sed -e 's|INSERT INTO|REPLACE INTO|' -e 's|CREATE TABLE|CREATE TABLE IF NOT EXISTS|' > /var/www/" . $this->site . "/tmpdump.sql");
 
         //now over to pom to push this local db up
-        $result = shell_exec('pom db:merge');
-        $output->writeln($result);
+        exec('pom db:merge');
+
+        $output->writeln('<info>Your local db has been pushed to the server</info>');
     }
 }

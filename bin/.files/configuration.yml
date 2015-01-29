@@ -8,6 +8,7 @@ scm: git
 releases: true
 revision: true
 key_path:
+key_path_deployed: false
 app: 93.184.216.34    #necessary to provide app otherwise whole site deletes... escalate to developers
 db: 93.184.216.34     #necessary to provide db otherwise whole site deletes... escalate to developers
 

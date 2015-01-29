@@ -56,7 +56,7 @@ class DeployInit extends DeployAbstract
         {
             $template_path = self::$files . '/configuration.yml';
 
-            `cp $template_path $this->target_dir/deploy/`;
+            `cp $template_path $this->target_dir/deploy/development.yml`;
 
             unlink($this->target_dir . '/deploy/development.php');
         }

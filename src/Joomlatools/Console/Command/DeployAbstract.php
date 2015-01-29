@@ -36,6 +36,8 @@ abstract class DeployAbstract extends Command
 
     protected $database;
 
+    protected $configuration;
+
     protected function configure()
     {
         $this->addArgument(
@@ -71,25 +73,7 @@ abstract class DeployAbstract extends Command
         if(file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml'))
         {
             $yaml = new Parser;
-            $value = $yaml->parse(file_get_contents($this->target_dir . '/deploy/' . $this->environment . '.yml'));
-
-            //@todo ok now we have the values from the config, it doesn't make any sense to store indiv properties
-            $this->user = $value['user'];
-            $this->repository = $value['repository'];
-            $this->deploy_to = $value['deploy_to'];
-            $this->backup = $value['backup'];
-            $this->branch = $value['branch'];
-            $this->remote_cache = $value['remote_cache'];
-            $this->key_path = $value['key_path'];
-            $this->app = $value['app'];
-            $this->db = $value['db'];
-            $this->database = array(
-                'name' => $value['database']['name'],
-                'user' => $value['database']['user'],
-                'password' => $value['database']['password'],
-                'host' => $value['database']['host'],
-                'charset' => $value['database']['host']
-            );
+            $this->configuration = $yaml->parse(file_get_contents($this->target_dir . '/deploy/' . $this->environment . '.yml'));
         }
     }
 }
