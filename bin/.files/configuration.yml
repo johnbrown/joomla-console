@@ -1,15 +1,15 @@
 user: deploy
-repository: url_to_repository
-deploy_to: /path/to/deploy/to/
-backup: true
-branch: develop
+repository:
+deploy_to:
+backup:
+branch:
 remote_cache: true
 scm: git
 releases: true
 revision: true
-key_path: /path/to/site/deploy/
-app: ip_address
-db: ip_address
+key_path:
+app: 93.184.216.34    #necessary to provide app otherwise whole site deletes... escalate to developers
+db: 93.184.216.34     #necessary to provide db otherwise whole site deletes... escalate to developers
 
 # If your app uses a database uncomment this:
 database:
