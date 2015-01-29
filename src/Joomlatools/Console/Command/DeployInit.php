@@ -14,16 +14,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeployInit extends DeployAbstract
 {
+
+    /**
+     * File cache
+     *
+     * @var string
+     */
+    protected static $files;
+
     protected function configure()
     {
         parent::configure();
+
+        if (!self::$files) {
+            self::$files = realpath(__DIR__.'/../../../../bin/.files');
+        }
 
         $this
             ->setName('deploy:init')
             ->setDescription('Generate vendor deploy and deploy folder');
     }
-
-    //@todo we now need to store configuration details in a yml file to help cross platform workings
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -41,9 +51,14 @@ class DeployInit extends DeployAbstract
             `pom init`;
         }
 
-        //benchmark the default development environment to create future ones
-        if(!file_exists($this->target_dir . '/deploy/template.php')){
-            `cp /var/www/helloworld/deploy/development.php /var/www/helloworld/deploy/template.php`;
+        //switch default php env configuration for yaml
+        if(file_exists($this->target_dir . '/deploy/development.php'))
+        {
+            $template_path = self::$files . '/configuration.yml';
+
+            `cp $template_path $this->target_dir/deploy/`;
+
+            unlink($this->target_dir . '/deploy/development.php');
         }
 
         $output->writeln('<info>pom initiated</info>');

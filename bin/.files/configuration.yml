@@ -1,0 +1,21 @@
+user: deploy
+repository: url_to_repository
+deploy_to: /path/to/deploy/to/
+backup: true
+branch: develop
+remote_cache: true
+scm: git
+releases: true
+revision: true
+key_path: /path/to/site/deploy/
+app: ip_address
+db: ip_address
+
+# If your app uses a database uncomment this:
+database:
+  name: sites_example
+  user: deploy
+  password: password
+  host: 127.0.0.1
+  charset: utf8
+  
