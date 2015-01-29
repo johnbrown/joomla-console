@@ -30,6 +30,18 @@ class DeploySetup extends DeployAbstract
     {
         parent::execute($input, $output);
 
+        $dialog = $this->getHelper('dialog');
+
+        $output->writeln('<info>You will replace the live database with a copy of your local environment.</info>');
+
+        if (!$dialog->askConfirmation(
+            $output,
+            '<question>Do you wish to proceed?</question>',
+            false
+        )) {
+            return;
+        }
+
         $this->createPom($input, $output);
         $this->pushConfiguration($input, $output);
         $this->createDatabase($input, $output);
@@ -42,7 +54,7 @@ class DeploySetup extends DeployAbstract
             return;
         }
 
-       exec('pom ' . $this->environment .' deploy:setup');
+       `pom $this->environment deploy:setup`;
 
        $output->writeln('<info>site fies have been pushed to the server</info>');
     }
@@ -54,7 +66,7 @@ class DeploySetup extends DeployAbstract
             return;
         }
 
-        exec('cp ' . $this->target_dir . '/configuration.php configurationLIVE.php');
+        `cp $this->target_dir/configuration.php configurationLIVE.php`;
 
         $source   = $this->target_dir.'/configuration.php';
         $target   = $this->target_dir.'/configurationLIVE.php';
@@ -96,13 +108,13 @@ class DeploySetup extends DeployAbstract
 
     public function createDatabase(InputInterface $input, OutputInterface $output)
     {
-        exec('pom db:create');
+        `pom db:create`;
 
         //first up we need to create a db export locally
         exec("mysqldump -u root -p --password='root' --host=127.0.0.1 sites_" . $this->site . " --lock-tables=FALSE --skip-add-drop-table | sed -e 's|INSERT INTO|REPLACE INTO|' -e 's|CREATE TABLE|CREATE TABLE IF NOT EXISTS|' > /var/www/" . $this->site . "/tmpdump.sql");
 
         //now over to pom to push this local db up
-        exec('pom db:merge');
+        `pom db:merge`;
 
         $output->writeln('<info>Your local db has been pushed to the server</info>');
     }
