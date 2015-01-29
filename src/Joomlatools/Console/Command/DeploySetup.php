@@ -42,6 +42,12 @@ class DeploySetup extends DeployAbstract
             return;
         }
 
+        if($this->configuration['app'] == ""){
+            $output->writeln('<comment>Sorry you must first provide the ip address of the sever in your config file before proceeding</comment>');
+        }
+
+        return;
+
         $this->createPom($input, $output);
         $this->pushConfiguration($input, $output);
         $this->createDatabase($input, $output);
