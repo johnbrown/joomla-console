@@ -16,6 +16,9 @@ use Symfony\Component\Yaml\Dumper;
 
 class DeployEdit extends DeployAbstract
 {
+
+    protected $standard_configs = array('repository', 'app', 'deploy_to', 'backup', 'branch', 'remote_cache', 'scm', 'releases', 'revision');
+
     protected function configure()
     {
         parent::configure();
@@ -64,45 +67,81 @@ class DeployEdit extends DeployAbstract
                 InputOption::VALUE_OPTIONAL,
                 "Mysql credentials in the form of ip:database:user:password",
                 null
-        );
+            )
+            ->addOption(
+                'backup',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Do you wish to backup on each deploy true / false",
+                null
+            )
+            ->addOption(
+                'branch',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Which SCM branch do you want to use?",
+                null
+            )
+            ->addOption(
+                'remote_cache',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Do you wish to use a remote cache true / false",
+                null
+            )
+            ->addOption(
+                'scm',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Which SCM do you use",
+                null
+            )
+            ->addOption(
+                'releases',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Do you want to use SCM a release",
+                null
+            )
+            ->addOption(
+                'revision',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Do you want to use a SCM revision",
+                null
+            )
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 
-        $old_configuration = $this->configuration;
         $new_configuration = $this->configuration;
 
         $user = $input->getOption('user');
-        if(strlen($user) && strpos($input->getOption('user'), ":"))
+        if(strlen($user) && strpos($user, ":"))
         {
             $array = explode(":", $user);
             $new_configuration['user'] = $array[0];
             $new_configuration['password'] = $array[1];
         }
 
-        $repository = $input->getOption('repository');
-        if(strlen($repository)){
-            $new_configuration['repository'] = $repository;
-        }
-
-        $app = $input->getOption('app');
-        if(strlen($app)){
-            $new_configuration['app'] = $repository;
-        }
-
         $db = $input->getOption('database');
-        if(strlen($db))
+        if(strlen($db) && strpos($db, ":"))
         {
             $array = explode(":", $db);
             $new_configuration['db'] = $array[0];
-            $new_configuration['user'] = $array[1];
-            $new_configuration['password'] = $array[2];
+            $new_configuration['database']['name'] = $array[1];
+            $new_configuration['database']['user'] = $array[2];
+            $new_configuration['database']['password'] = $array[3];
         }
 
-        if(strlen($input->getOption('deploy_to'))){
-            $new_configuration['deploy_to'] = $input->getOption('deploy_to');
+        foreach($this->standard_configs as $config)
+        {
+            if(strlen($input->getOption($config))){
+                $new_configuration[$config] = $input->getOption($config);
+             }
         }
 
         $this->saveConfiguration($input, $output, $new_configuration);
