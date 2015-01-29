@@ -15,11 +15,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeployEnvironment extends DeployAbstract
 {
+    /**
+     * File cache
+     *
+     * @var string
+     */
+    protected static $files;
+
     protected $environment;
 
     protected function configure()
     {
         parent::configure();
+
+        if (!self::$files) {
+            self::$files = realpath(__DIR__.'/../../../../bin/.files');
+        }
 
         $this
             ->setName('deploy:environment')
@@ -27,12 +38,10 @@ class DeployEnvironment extends DeployAbstract
             ->addArgument(
                 'environment',
                 InputArgument::REQUIRED,
-                'Please state the deploy environment... will default to development',
+                'Please state the name of the new deploy environment',
                 null
             );
     }
-
-    //@todo again this needs to be updated to produce yml files to help integration
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -40,21 +49,20 @@ class DeployEnvironment extends DeployAbstract
 
         $this->environment = $input->getArgument('environment');
 
-        if(!file_exists( $this->target_dir . '/deploy')){
+        if(!file_exists( $this->target_dir . '/deploy'))
+        {
             $output->writeln('<warning>Must be valid /deploy folder... run deploy:init first</warning>');
             return;
         }
 
-        $env_file = $this->target_dir . '/deploy/' . $this->environment .'.php';
+        if(!file_exists($this->target_dir . '/deploy/' . $this->environment .'.yml'))
+        {
+            $template_path = self::$files . '/configuration.yml';
 
-        if(!file_exists($env_file)){
-
-            `cp $this->target_dir/deploy/template.php $this->target_dir/deploy/$this->environment.php`;
+            `cp $template_path $this->target_dir/deploy/$this->environment.yml`;
 
             $output->writeln('<info>new environment ' . $this->environment . ' created at:</info>');
-            $output->writeln($this->target_dir . '/deploy/' . $this->environment . '.php');
+            $output->writeln($this->target_dir . '/deploy/' . $this->environment . '.yml');
         }
-
-        return;
     }
 }
