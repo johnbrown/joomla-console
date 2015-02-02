@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Dumper;
 
 abstract class DeployAbstract extends Command
 {
@@ -103,5 +104,16 @@ abstract class DeployAbstract extends Command
         }
 
         return $this->configuration;
+    }
+
+    public function saveConfiguration($configuration)
+    {
+        $dumper = new Dumper();
+
+        $yaml = $dumper->dump($configuration, 2);
+
+        file_put_contents($this->target_dir . '/deploy/' . $this->environment . '.yml', $yaml);
+
+        $this->configuration = $configuration;
     }
 }

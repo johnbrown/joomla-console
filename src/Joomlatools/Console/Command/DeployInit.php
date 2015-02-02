@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Dumper;
 
 class DeployInit extends DeployAbstract
 {
@@ -59,6 +60,13 @@ class DeployInit extends DeployAbstract
             `cp $template_path $this->target_dir/deploy/development.yml`;
 
             unlink($this->target_dir . '/deploy/development.php');
+
+            $configuration = $this->getconfiguration();
+
+            $configuration['deploy_to'] = $this->target_dir;
+            $configuration['database']['name'] = $this->target_db;
+
+            $this->saveConfiguration($configuration);
         }
 
         $output->writeln('<info>pom initiated</info>');

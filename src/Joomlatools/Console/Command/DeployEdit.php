@@ -144,15 +144,6 @@ class DeployEdit extends DeployAbstract
              }
         }
 
-        $this->saveConfiguration($input, $output, $new_configuration);
-    }
-
-    public function saveConfiguration(InputInterface $input, OutputInterface $output, $configuration)
-    {
-        $dumper = new Dumper();
-
-        $yaml = $dumper->dump($configuration, 2);
-
-        file_put_contents($this->target_dir . '/deploy/' . $this->environment . '.yml', $yaml);
+        $this->saveConfiguration($new_configuration);
     }
 }

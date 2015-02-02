@@ -62,7 +62,7 @@ class DeploySSH extends DeployAbstract
             $this->configuration['key_path_deployed'] = true;
             $this->configuration['key_path'] = $this->target_dir . '/deploy/id_rsa';
 
-            $this->saveConfiguration($input, $output);
+            $this->saveConfiguration($this->configuration);
 
             $output->writeln('<info>SSH keys have been added to your server, and your deploy configurations updated</info>');
             return;
@@ -73,12 +73,12 @@ class DeploySSH extends DeployAbstract
         $output->writeln($this->target_dir . '/deploy');
     }
 
-    public function saveConfiguration(InputInterface $input, OutputInterface $output)
+    /*public function saveConfiguration(InputInterface $input, OutputInterface $output)
     {
         $dumper = new Dumper();
 
         $yaml = $dumper->dump($this->configuration, 2);
 
         file_put_contents($this->target_dir . '/deploy/' . $this->environment . '.yml', $yaml);
-    }
+    }*/
 }
