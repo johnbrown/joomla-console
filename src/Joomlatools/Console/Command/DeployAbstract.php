@@ -40,11 +40,13 @@ abstract class DeployAbstract extends Command
 
     protected function configure()
     {
-        $this->addArgument(
+        $this->addOption(
             'site',
-            InputArgument::REQUIRED,
+            null,
+            InputOption::VALUE_REQUIRED,
             'Alphanumeric site name. Also used in the site URL with .dev domain'
-        )->addOption(
+        )
+        ->addOption(
             'www',
             null,
             InputOption::VALUE_REQUIRED,
@@ -63,17 +65,43 @@ abstract class DeployAbstract extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->site         = $input->getArgument('site');
-        $this->www          = $input->getOption('www');
+        $site = $input->getOption('site');
+
+        $result = preg_match('/\\/var\\/www\\/([^\\/]+)/i', getCwd(), $matches);
+
+        if(count($matches)){
+            $this->site = $matches[1];
+
+            $this->target_db = 'sites_' . $this->site;
+            $this->target_dir = $matches[0];
+        }
+        elseif($site !="")
+        {
+            $this->site         = $input->getOption('site');
+            $this->www          = $input->getOption('www');
+
+            $this->target_db  = 'sites_' . $this->site;
+            $this->target_dir = $this->www.'/'.$this->site;
+        }
+        else
+        {
+            $output->writeln("Sorry can't find a valid site provide one via site option");
+            exit();
+        }
+
         $this->environment  = $input->getOption('environment');
 
-        $this->target_db  = 'sites_'.$this->site;
-        $this->target_dir = $this->www.'/'.$this->site;
+        $this->getConfiguration();
+    }
 
+    public function getConfiguration()
+    {
         if(file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml'))
         {
             $yaml = new Parser;
             $this->configuration = $yaml->parse(file_get_contents($this->target_dir . '/deploy/' . $this->environment . '.yml'));
         }
+
+        return $this->configuration;
     }
 }
