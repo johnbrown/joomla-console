@@ -48,6 +48,7 @@ class DeploySSH extends DeployAbstract
         //want to overload defaults set by the configuration file
         $this->configuration['user'] = $input->getArgument('user');
         $this->configuration['app'] = $input->getArgument('app');
+        $this->configuration['db'] = $input->getArgument('app');
 
         //first up we need to create a rsa key in a location that can be read
         if(!file_exists($this->target_dir . '/deploy/id_rsa')){
@@ -56,6 +57,8 @@ class DeploySSH extends DeployAbstract
 
         if(!$this->configuration['key_path_deployed'])
         {
+            //seems to work best when copy-id and cat??
+            exec('ssh-copy-id ' . $this->configuration['user'] . '@' . $this->configuration['app']);
             $result = exec('cat '. $this->target_dir . '/deploy/id_rsa.pub | ssh ' . $this->configuration['user'] . '@' . $this->configuration['app'] . ' "mkdir -p ~/.ssh && cat >>  ~/.ssh/authorized_keys"');
             $output->writeln($result);
 
@@ -72,13 +75,4 @@ class DeploySSH extends DeployAbstract
         $output->writeln('set `key_path_deployed` to false here if you want to resend:');
         $output->writeln($this->target_dir . '/deploy');
     }
-
-    /*public function saveConfiguration(InputInterface $input, OutputInterface $output)
-    {
-        $dumper = new Dumper();
-
-        $yaml = $dumper->dump($this->configuration, 2);
-
-        file_put_contents($this->target_dir . '/deploy/' . $this->environment . '.yml', $yaml);
-    }*/
 }

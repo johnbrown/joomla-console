@@ -64,6 +64,7 @@ class DeploySetup extends DeployAbstract
         }
     }
 
+    //@todo we should really expect the directory and configuration to be present before this step
     public function createPom(InputInterface $input, OutputInterface $output)
     {
         if(!file_exists($this->target_dir . '/deploy/' . $this->environment . '.yml'))
