@@ -17,80 +17,39 @@ use Symfony\Component\Yaml\Dumper;
 
 abstract class DeployAbstract extends Command
 {
-    protected $site;
-
-    protected $user;
-
-    protected $repository;
-
-    protected $deploy_to;
-
-    protected $backup;
-
-    protected $branch;
-
-    protected $remote_cache;
-
-    protected $key_path;
-
-    protected $app;
-
-    protected $database;
+    protected $environment;
 
     protected $configuration;
 
     protected function configure()
     {
         $this->addOption(
-            'site',
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Alphanumeric site name. Also used in the site URL with .dev domain'
-        )
-        ->addOption(
-            'www',
-            null,
-            InputOption::VALUE_REQUIRED,
-            "Web server root",
-            '/var/www'
-        )
-        ->addOption(
             'environment',
             null,
             InputOption::VALUE_REQUIRED,
             "Which deploy environment would you like to use",
             'development'
-        )
-        ;
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $site = $input->getOption('site');
-
         $result = preg_match('/\\/var\\/www\\/([^\\/]+)/i', getCwd(), $matches);
 
-        if(count($matches)){
-            $this->site = $matches[1];
+        $this->environment  = $input->getOption('environment');
 
+        if(count($matches))
+        {
+            $this->site = $matches[1];
             $this->target_db = 'sites_' . $this->site;
             $this->target_dir = $matches[0];
         }
-        elseif($site !="")
-        {
-            $this->site         = $input->getOption('site');
-            $this->www          = $input->getOption('www');
 
-            $this->target_db  = 'sites_' . $this->site;
-            $this->target_dir = $this->www.'/'.$this->site;
-        }
-        else
+        if(getcwd() != $this->target_dir)
         {
-            $output->writeln("Sorry can't find a valid site provide one via site option");
+            $output->write('<comment>You must be in the project root directory to proceed</comment>');
             exit();
         }
-
-        $this->environment  = $input->getOption('environment');
 
         $this->getConfiguration();
     }
