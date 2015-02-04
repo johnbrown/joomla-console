@@ -69,6 +69,18 @@ class DeployInit extends DeployAbstract
             $this->saveConfiguration($configuration);
         }
 
+        //be sure to update the .gitignore so as not to commit senstive information
+        if(file_exists($this->target_dir . '/.gitignore'))
+        {
+            $contents = file_get_contents($this->target_dir . '/.gitignore');
+
+            if(!strpos($contents, '/deploy'))
+            {
+                $ignore = PHP_EOL . "/deploy" . PHP_EOL;
+                file_put_contents($this->target_dir . '/.gitignore', $ignore, FILE_APPEND);
+            }
+        }
+
         $output->writeln('<info>pom initiated</info>');
     }
 }
