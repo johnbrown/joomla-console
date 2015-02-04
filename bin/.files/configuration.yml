@@ -5,7 +5,7 @@ backup:
 branch:
 remote_cache: true
 scm: git
-releases: true
+releases: 5
 revision: true
 key_path:
 key_path_deployed: false
