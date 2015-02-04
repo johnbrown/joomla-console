@@ -30,19 +30,6 @@ class DeploySetup extends DeployAbstract
     {
         parent::execute($input, $output);
 
-        if($this->configuration['app'] == "")
-        {
-            $output->writeln('<comment>Sorry you must first provide the ip address of the sever in your config file before proceeding</comment>');
-            return;
-        }
-
-
-        if($this->configuration['repository'] == "")
-        {
-            $output->writeln("<comment>You haven't specified a repository, please edit your configuration</comment>");
-            return;
-        }
-
         //finally just double check with the user they want to do this
         $dialog = $this->getHelper('dialog');
 
