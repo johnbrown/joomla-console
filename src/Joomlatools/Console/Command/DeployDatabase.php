@@ -34,6 +34,19 @@ class DeployDatabase extends DeployAbstract
         //first up we need to create a db export locally
         exec("mysqldump -u root -p --password='root' --host=127.0.0.1 sites_" . $this->site . " --lock-tables=FALSE --skip-add-drop-table | sed -e 's|INSERT INTO|REPLACE INTO|' -e 's|CREATE TABLE|CREATE TABLE IF NOT EXISTS|' > " . $this->target_dir . "/tmpdump.sql");
 
+        //finally just double check with the user they want to do this
+        $dialog = $this->getHelper('dialog');
+
+        $output->writeln('<info>You will replace the live database with a copy of your local environment.</info>');
+
+        if (!$dialog->askConfirmation(
+            $output,
+            '<question>Do you wish to proceed?</question>',
+            false
+        )) {
+            return;
+        }
+
         //now over to pom to push this local db up
         $result = shell_exec('pom db:merge');
 

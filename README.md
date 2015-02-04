@@ -224,3 +224,10 @@ Ok so you have set up your deployment for a project, you have made it possible t
 `joomla deploy:setup awesome` 
 
 This wil take all your site files and database and push them up to the server. Your database will be wiped and replaced with a copy of your local database so you are warned about this. Type YES to continue
+
+##Deploy local database
+If you want to deploy your database to the web server once more, you can use this command: 
+
+`joomla deploy:database` 
+
+Warning your databse will be wiped and you will be warned about this. Type YES to continue
