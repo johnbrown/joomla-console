@@ -1,5 +1,5 @@
 {
-    "name": "joomlatools/joomla-console",
+    "name": "brown298/joomla-console",
     "type": "project",
     "license": "MPLv2",
     "description": "This command-line script helps to ease the management of Joomla sites in your development environment.",
