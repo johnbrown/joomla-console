@@ -46,10 +46,18 @@ abstract class SiteAbstract extends Command
         ;
     }
 
+    /**
+     * execute
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->site       = $input->getArgument('site');
         $this->www        = $input->getOption('www');
+
 
         $this->target_db  = 'sites_'.$this->site;
         $this->target_dir = $this->www.'/'.$this->site;

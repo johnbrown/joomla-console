@@ -16,7 +16,10 @@
         "symfony/console": "2.4.*"
     },
     "autoload": {
-        "psr-0": {"Joomlatools\\": "src/"}
+        "psr-0": {
+            "Joomlatools\\": "src/",
+            "Brown298\\": "src/"
+        }
     },
     "bin": ["bin/joomla"]
 }

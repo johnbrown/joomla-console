@@ -17,15 +17,6 @@ use Symfony\Component\Console\Application;
 
 $application = new Application('Joomla console tools', '1.0');
 
-$application->add(new Joomlatools\Console\Command\Symlink());
-
-$application->add(new Joomlatools\Console\Command\SiteCreate());
-$application->add(new Joomlatools\Console\Command\SiteDelete());
-$application->add(new Joomlatools\Console\Command\SiteToken());
-$application->add(new Joomlatools\Console\Command\ExtensionSymlink());
-$application->add(new Joomlatools\Console\Command\ExtensionInstall());
-$application->add(new Joomlatools\Console\Command\ExtensionInstallFile());
-
-$application->add(new Joomlatools\Console\Command\Versions());
+$application->add(new Brown298\Console\Command\RetsUpdate());
 
 $application->run();
