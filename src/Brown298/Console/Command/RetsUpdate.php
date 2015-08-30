@@ -97,7 +97,7 @@ class RetsUpdate extends SiteAbstract
 
         // Output buffer is used as a guard against Joomla including ._ files when searching for adapters
         // See: http://kadin.sdf-us.org/weblog/technology/software/deleting-dot-underscore-files.html
-//        ob_start();
+        ob_start();
         switch ($this->type) {
             case 'columns':
                 \JoomanagerHelpers::loadRetsColumns();
@@ -110,27 +110,31 @@ class RetsUpdate extends SiteAbstract
                 break;
             case 'all':
                 \JoomanagerHelpers::loadRetsColumns();
-//                $this->readOutput($output);
+                $this->readOutput($output);
                 \JoomanagerHelpers::trimRetsData();
-//                $this->readOutput($output);
-                \JoomanagerHelpers::saverets($this->updateDate);
+                $this->readOutput($output);
+                \JoomanagerHelpers::saverets($this->updateDate, $output);
                 break;
         }
-//        $this->readOutput($output);
-//        ob_end_flush();
+        $this->readOutput($output);
+        ob_end_flush();
     }
 
     /**
      * @param OutputInterface $output
      */
-    private function readOutput( OutputInterface $output)
+    public static function readOutput( OutputInterface $output)
     {
-        $cmdOutput = ob_get_clean();
+        $cmdOutput = ob_get_contents();
+        ob_clean();
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_QUIET) {
+            return;
+        }
 
         $breaks    = array("<br />","<br>","<br/>");
         $cmdOutput = str_ireplace($breaks, "\r\n", $cmdOutput);
 
-        $output->write($cmdOutput);
+        $output->writeln($cmdOutput);
     }
 
 }
