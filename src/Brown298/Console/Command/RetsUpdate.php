@@ -46,6 +46,7 @@ class RetsUpdate extends SiteAbstract
                     . DIRECTORY_SEPARATOR . '..'
             )
             ->addOption('update_date', null, InputOption::VALUE_REQUIRED, "Date to update from", null)
+            ->addOption('agent_name', null, InputOption::VALUE_REQUIRED, "URL Escaped Listing agent name to update", 'Eleanor%20Cheng')
             ->addArgument(
                 'type',
                 InputArgument::OPTIONAL,
@@ -108,10 +109,15 @@ class RetsUpdate extends SiteAbstract
             case 'load':
                 \JoomanagerHelpers::saverets($this->updateDate);
                 break;
+            case 'agent':
+                \JoomanagerHelpers::saverets($this->updateDate, $output, $input->getOption('agent_name'));
+                break;
             case 'all':
                 \JoomanagerHelpers::loadRetsColumns();
                 $this->readOutput($output);
                 \JoomanagerHelpers::trimRetsData();
+                $this->readOutput($output);
+                \JoomanagerHelpers::saverets($this->updateDate, $output,  $input->getOption('agent_name'));
                 $this->readOutput($output);
                 \JoomanagerHelpers::saverets($this->updateDate, $output);
                 break;
